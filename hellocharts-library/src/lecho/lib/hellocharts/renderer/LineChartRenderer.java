@@ -157,12 +157,14 @@ public class LineChartRenderer extends AbstractChartRenderer {
                 int pointRadius = ChartUtils.dp2px(density, line.getPointRadius());
                 int valueIndex = 0;
                 for (PointValue pointValue : line.getValues()) {
-                    final float rawValueX = computator.computeRawX(pointValue.getX());
-                    final float rawValueY = computator.computeRawY(pointValue.getY());
-                    if (isInArea(rawValueX, rawValueY, touchX, touchY, pointRadius + touchToleranceMargin)) {
-                        selectedValue.set(lineIndex, valueIndex, SelectedValueType.LINE);
+                    if (pointValue != null) {
+                        final float rawValueX = computator.computeRawX(pointValue.getX());
+                        final float rawValueY = computator.computeRawY(pointValue.getY());
+                        if (isInArea(rawValueX, rawValueY, touchX, touchY, pointRadius + touchToleranceMargin)) {
+                            selectedValue.set(lineIndex, valueIndex, SelectedValueType.LINE);
+                        }
+                        ++valueIndex;
                     }
-                    ++valueIndex;
                 }
             }
             ++lineIndex;
@@ -177,17 +179,21 @@ public class LineChartRenderer extends AbstractChartRenderer {
         for (Line line : data.getLines()) {
             // Calculate max and min for viewport.
             for (PointValue pointValue : line.getValues()) {
-                if (pointValue.getX() < tempMaximumViewport.left) {
-                    tempMaximumViewport.left = pointValue.getX();
-                }
-                if (pointValue.getX() > tempMaximumViewport.right) {
-                    tempMaximumViewport.right = pointValue.getX();
-                }
-                if (pointValue.getY() < tempMaximumViewport.bottom) {
-                    tempMaximumViewport.bottom = pointValue.getY();
-                }
-                if (pointValue.getY() > tempMaximumViewport.top) {
-                    tempMaximumViewport.top = pointValue.getY();
+
+                //dwf
+                if (pointValue != null) {
+                    if (pointValue.getX() < tempMaximumViewport.left) {
+                        tempMaximumViewport.left = pointValue.getX();
+                    }
+                    if (pointValue.getX() > tempMaximumViewport.right) {
+                        tempMaximumViewport.right = pointValue.getX();
+                    }
+                    if (pointValue.getY() < tempMaximumViewport.bottom) {
+                        tempMaximumViewport.bottom = pointValue.getY();
+                    }
+                    if (pointValue.getY() > tempMaximumViewport.top) {
+                        tempMaximumViewport.top = pointValue.getY();
+                    }
                 }
 
             }
@@ -217,16 +223,19 @@ public class LineChartRenderer extends AbstractChartRenderer {
         int valueIndex = 0;
         for (PointValue pointValue : line.getValues()) {
 
-            final float rawX = computator.computeRawX(pointValue.getX());
-            final float rawY = computator.computeRawY(pointValue.getY());
+            //dwf
+            if (pointValue != null) {
+                final float rawX = computator.computeRawX(pointValue.getX());
+                final float rawY = computator.computeRawY(pointValue.getY());
 
-            if (valueIndex == 0) {
-                path.moveTo(rawX, rawY);
-            } else {
-                path.lineTo(rawX, rawY);
+                if (valueIndex == 0) {
+                    path.moveTo(rawX, rawY);
+                } else {
+                    path.lineTo(rawX, rawY);
+                }
+
+                ++valueIndex;
             }
-
-            ++valueIndex;
 
         }
 
@@ -369,25 +378,29 @@ public class LineChartRenderer extends AbstractChartRenderer {
         pointPaint.setColor(line.getPointColor());
         int valueIndex = 0;
         for (PointValue pointValue : line.getValues()) {
-            int pointRadius = ChartUtils.dp2px(density, line.getPointRadius());
-            final float rawX = computator.computeRawX(pointValue.getX());
-            final float rawY = computator.computeRawY(pointValue.getY());
-            if (computator.isWithinContentRect(rawX, rawY, checkPrecision)) {
-                // Draw points only if they are within contentRectMinusAllMargins, using contentRectMinusAllMargins
-                // instead of viewport to avoid some
-                // float rounding problems.
-                if (MODE_DRAW == mode) {
-                    drawPoint(canvas, line, pointValue, rawX, rawY, pointRadius);
-                    if (line.hasLabels()) {
-                        drawLabel(canvas, line, pointValue, rawX, rawY, pointRadius + labelOffset);
+
+            //dwf
+            if (pointValue != null) {
+                int pointRadius = ChartUtils.dp2px(density, line.getPointRadius());
+                final float rawX = computator.computeRawX(pointValue.getX());
+                final float rawY = computator.computeRawY(pointValue.getY());
+                if (computator.isWithinContentRect(rawX, rawY, checkPrecision)) {
+                    // Draw points only if they are within contentRectMinusAllMargins, using contentRectMinusAllMargins
+                    // instead of viewport to avoid some
+                    // float rounding problems.
+                    if (MODE_DRAW == mode) {
+                        drawPoint(canvas, line, pointValue, rawX, rawY, pointRadius);
+                        if (line.hasLabels()) {
+                            drawLabel(canvas, line, pointValue, rawX, rawY, pointRadius + labelOffset);
+                        }
+                    } else if (MODE_HIGHLIGHT == mode) {
+                        highlightPoint(canvas, line, pointValue, rawX, rawY, lineIndex, valueIndex);
+                    } else {
+                        throw new IllegalStateException("Cannot process points in mode: " + mode);
                     }
-                } else if (MODE_HIGHLIGHT == mode) {
-                    highlightPoint(canvas, line, pointValue, rawX, rawY, lineIndex, valueIndex);
-                } else {
-                    throw new IllegalStateException("Cannot process points in mode: " + mode);
                 }
+                ++valueIndex;
             }
-            ++valueIndex;
         }
     }
 
