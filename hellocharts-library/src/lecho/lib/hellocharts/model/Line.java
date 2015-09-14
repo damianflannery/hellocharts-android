@@ -66,7 +66,11 @@ public class Line {
         this.formatter = line.formatter;
 
         for (PointValue pointValue : line.values) {
-            this.values.add(new PointValue(pointValue));
+            if (pointValue != null) {
+                this.values.add(new PointValue(pointValue));
+            } else {
+                this.values.add(null);
+            }
         }
     }
 
@@ -81,7 +85,10 @@ public class Line {
 
     public void finish() {
         for (PointValue value : values) {
-            value.finish();
+            //dwf
+            if (value != null) {
+                value.finish();
+            }
         }
     }
 
