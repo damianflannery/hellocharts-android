@@ -72,7 +72,10 @@ public class Line {
 
     public void update(float scale) {
         for (PointValue value : values) {
-            value.update(scale);
+            //dwf
+            if (value != null) {
+                value.update(scale);
+            }
         }
     }
 
