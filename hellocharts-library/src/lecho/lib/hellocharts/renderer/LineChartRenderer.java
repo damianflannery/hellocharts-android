@@ -197,14 +197,17 @@ public class LineChartRenderer extends AbstractChartRenderer {
                 }
 
             }
-
-
         }
 
-        tempMaximumViewport.left -= 5;
-        tempMaximumViewport.right += 5;
-        tempMaximumViewport.top -= 5;
-        tempMaximumViewport.bottom +=5;
+        if (tempMaximumViewport.left == tempMaximumViewport.right) {
+            tempMaximumViewport.left -= 5;
+            tempMaximumViewport.right += 5;
+        }
+
+        if (tempMaximumViewport.top == tempMaximumViewport.bottom) {
+            tempMaximumViewport.top -= 5;
+            tempMaximumViewport.bottom += 5;
+        }
     }
 
     private int calculateContentRectInternalMargin() {
