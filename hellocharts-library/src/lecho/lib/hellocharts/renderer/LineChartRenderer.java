@@ -195,19 +195,18 @@ public class LineChartRenderer extends AbstractChartRenderer {
                         tempMaximumViewport.top = pointValue.getY();
                     }
                 }
-
             }
         }
 
-        if (tempMaximumViewport.left == tempMaximumViewport.right) {
+        //if (tempMaximumViewport.left == tempMaximumViewport.right) {
             tempMaximumViewport.left -= 5;
             tempMaximumViewport.right += 5;
-        }
+        //}
 
-        if (tempMaximumViewport.top == tempMaximumViewport.bottom) {
-            tempMaximumViewport.top -= 5;
-            tempMaximumViewport.bottom += 5;
-        }
+        //if (tempMaximumViewport.top == tempMaximumViewport.bottom) {
+            tempMaximumViewport.top += 5;
+            tempMaximumViewport.bottom -= 5;
+        //}
     }
 
     private int calculateContentRectInternalMargin() {
